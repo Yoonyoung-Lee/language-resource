@@ -1,0 +1,89 @@
+---
+globs: **/app/api/**/*,**/api/**/*,**/server/**/*
+description: Backend API development standards
+---
+
+# Backend API Development Rules
+
+## Tech Stack Requirements
+- Default to **Next.js App Router with TypeScript**
+- All API routes should be placed under `/app/api`
+- Use **async/await** for all asynchronous operations
+- Always return JSON responses with proper HTTP status codes
+
+## API Endpoint Standards
+- Keep endpoints simple and focused
+- Start with mock data, then replace with DB/external service integration
+- Use clear, RESTful naming conventions
+- Add inline comments explaining business logic
+
+## Required API Endpoints for Figma Plugin Project
+1. `GET /api/resources/search` - Search language resources
+2. `POST /api/suggest` - Get suggestions for selected Figma elements
+3. `POST /api/audit` - Audit entire Figma document
+
+## Code Style Standards
+- Use **camelCase** for JavaScript/TypeScript variables and functions
+- Use **snake_case** for database field names
+- Add error handling with meaningful messages
+- Keep functions small and focused
+
+## Example API Route Structure
+```tsx
+import { NextRequest, NextResponse } from 'next/server'
+
+// GET /api/resources/search
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const query = searchParams.get('q')
+    
+    // Start with mock data for rapid development
+    const mockResults = [
+      { id: 1, text: "Hello", language: "en" },
+      { id: 2, text: "Hola", language: "es" }
+    ]
+    
+    // Filter based on query
+    const filteredResults = query 
+      ? mockResults.filter(item => 
+          item.text.toLowerCase().includes(query.toLowerCase())
+        )
+      : mockResults
+    
+    return NextResponse.json({ 
+      success: true, 
+      data: filteredResults 
+    })
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: 'Search failed' },
+      { status: 500 }
+    )
+  }
+}
+
+// POST /api/suggest
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { selection } = body
+    
+    // Mock suggestion logic
+    const suggestions = [
+      { text: "Consider using consistent spacing", priority: "high" },
+      { text: "Text could be more accessible", priority: "medium" }
+    ]
+    
+    return NextResponse.json({ 
+      success: true, 
+      suggestions 
+    })
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: 'Suggestion failed' },
+      { status: 500 }
+    )
+  }
+}
+```

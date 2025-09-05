@@ -1,0 +1,58 @@
+---
+globs: *.tsx,*.ts,**/components/**/*,**/hooks/**/*
+description: Frontend component development standards
+---
+
+# Frontend Component Development Rules
+
+## Tech Stack Requirements
+- Always use **TypeScript + React + Tailwind CSS + shadcn/ui**
+- Write clean, production-ready code with minimal boilerplate
+- Components should be easy for non-developers to read and extend
+
+## UI Component Guidelines
+- Structure UI using shadcn/ui components when possible:
+  - `Card` for content containers
+  - `Button` for actions
+  - `Input` for form fields
+  - `Table` for data display
+  - `Dialog` for modals/overlays
+- Prefer semantic component composition over raw HTML elements
+- Use descriptive component and prop names in English
+
+## Code Style Standards
+- Use **camelCase** for JavaScript/TypeScript variables and functions
+- Add short inline comments explaining key parts of the logic
+- Keep functions small and focused (single responsibility)
+- Structure components with clear prop interfaces
+
+## Example Component Structure
+```tsx
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+
+interface ComponentProps {
+  title: string
+  onAction: () => void
+}
+
+export function ExampleComponent({ title, onAction }: ComponentProps) {
+  // Handle user interaction
+  const handleClick = () => {
+    onAction()
+  }
+
+  return (
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Button onClick={handleClick} className="w-full">
+          Take Action
+        </Button>
+      </CardContent>
+    </Card>
+  )
+}
+```

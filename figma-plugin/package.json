@@ -1,0 +1,29 @@
+{
+  "name": "language-resource-manager-plugin",
+  "version": "1.0.0",
+  "description": "Figma plugin for language resource management and accessibility analysis",
+  "main": "dist/code.js",
+  "scripts": {
+    "build": "npm run build-main && npm run build-ui",
+    "build-main": "tsc src/code.ts --outDir dist --target es2017 --moduleResolution node --skipLibCheck --typeRoots ./node_modules/@figma/plugin-typings",
+    "build-ui": "tsc src/ui.ts --outDir dist --target es2017 --moduleResolution node --lib dom,dom.iterable --skipLibCheck && cp src/ui.html dist/",
+    "watch": "npm run build && npm run watch-main & npm run watch-ui",
+    "watch-main": "tsc src/code.ts --outDir dist --target es2017 --moduleResolution node --skipLibCheck --typeRoots ./node_modules/@figma/plugin-typings --watch",
+    "watch-ui": "tsc src/ui.ts --outDir dist --target es2017 --moduleResolution node --lib dom,dom.iterable --skipLibCheck --watch",
+    "dev": "npm run build && npm run watch"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.97.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "figma",
+    "plugin",
+    "language",
+    "accessibility",
+    "localization"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

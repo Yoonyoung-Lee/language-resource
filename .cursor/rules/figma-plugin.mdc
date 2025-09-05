@@ -1,0 +1,99 @@
+---
+globs: **/plugin/**/*,**/figma/**/*,**/*plugin*
+description: Figma plugin development standards
+---
+
+# Figma Plugin Development Rules
+
+## Plugin Architecture
+- Use **TypeScript** for type safety with Figma API
+- Separate UI code from Figma API logic
+- Handle plugin messaging between UI and main thread properly
+
+## Core Functionality Requirements
+
+### Selection Mode
+- Get current Figma selection via `figma.currentPage.selection`
+- Send selection data to `/api/suggest` endpoint
+- Display suggestions in plugin UI
+- Allow users to apply suggestions back to Figma elements
+
+### Full Scan Mode  
+- Traverse entire Figma document tree
+- Collect all text nodes and design elements
+- Send document data to `/api/audit` endpoint
+- Present comprehensive audit results with actionable items
+
+## Plugin Code Structure
+```typescript
+// main.ts - Figma API side
+figma.showUI(__html__, { width: 400, height: 500 })
+
+// Handle messages from UI
+figma.ui.onmessage = async (msg) => {
+  if (msg.type === 'get-selection') {
+    // Get current selection data
+    const selection = figma.currentPage.selection
+    const selectionData = selection.map(node => ({
+      id: node.id,
+      name: node.name,
+      type: node.type,
+      // Extract relevant properties
+    }))
+    
+    figma.ui.postMessage({ 
+      type: 'selection-data', 
+      data: selectionData 
+    })
+  }
+}
+
+// ui.tsx - React UI side
+import { Card, Button } from '@/components/ui'
+
+export function PluginUI() {
+  const [suggestions, setSuggestions] = useState([])
+  
+  // Request suggestions for current selection
+  const getSuggestions = async () => {
+    // Send message to main thread
+    parent.postMessage({ 
+      pluginMessage: { type: 'get-selection' } 
+    }, '*')
+    
+    // Handle response and call API
+    window.onmessage = async (event) => {
+      if (event.data.pluginMessage?.type === 'selection-data') {
+        const response = await fetch('/api/suggest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ selection: event.data.pluginMessage.data })
+        })
+        const result = await response.json()
+        setSuggestions(result.suggestions)
+      }
+    }
+  }
+
+  return (
+    <Card className="p-4">
+      <Button onClick={getSuggestions} className="w-full mb-4">
+        Get Suggestions
+      </Button>
+      {/* Display suggestions */}
+    </Card>
+  )
+}
+```
+
+## API Integration Standards
+- Use **fetch** for HTTP requests to your API endpoints
+- Handle network errors gracefully (plugin may be offline)
+- Cache results when appropriate to improve performance
+- Show loading states during API calls
+
+## User Experience Guidelines  
+- Provide clear feedback for all actions
+- Show progress indicators for long operations (full scan)
+- Allow users to easily apply or dismiss suggestions
+- Handle edge cases (no selection, empty document, etc.)

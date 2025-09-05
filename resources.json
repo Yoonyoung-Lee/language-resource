@@ -1,0 +1,191 @@
+[
+  {
+    "id": "1",
+    "key": "workspace.create",
+    "products": ["knox", "brity"],
+    "category": {
+      "common": true,
+      "section1": "Workspace",
+      "component": "Popup"
+    },
+    "translations": {
+      "ko-KR": "나중에 주가하기 & 닫기",
+      "en-US": "Add Later & Close"
+    },
+    "status": "approved",
+    "metadata": {
+      "createdAt": "2023-07-03",
+      "updatedAt": "2023-07-03",
+      "author": "김개발"
+    }
+  },
+  {
+    "id": "2", 
+    "key": "voice.chat.join",
+    "products": ["knox"],
+    "category": {
+      "section1": "음성/영상 채팅",
+      "component": "Dialog"
+    },
+    "translations": {
+      "ko-KR": "음성/영상 채팅에 참가합니다.",
+      "en-US": "You are in a voice/video chat.",
+      "zh-CN": "正在进行语音/视频聊天。",
+      "ja-JP": "音声/ビデオチャット中です。"
+    },
+    "productSpecific": {
+      "knoxTeams": {
+        "ko-KR": "음성 채팅에 참가합니다.",
+        "en-US": "Ban dang tham gia voice/video chat.",
+        "vi-VN": "Ban đang tham gia voice/video chat."
+      }
+    },
+    "status": "approved",
+    "metadata": {
+      "createdAt": "2018-02-20",
+      "updatedAt": "2023-07-03", 
+      "author": "이번역"
+    }
+  },
+  {
+    "id": "3",
+    "key": "user.name.request",
+    "products": ["knox", "brity"],
+    "category": {
+      "section1": "시스템 메시지"
+    },
+    "translations": {
+      "ko-KR": "{user name}님이 음성 대화를 요청합니다.",
+      "en-US": "{user name} asks for a voice chat.",
+      "zh-CN": "{user name}要求进行语音通话。",
+      "ja-JP": "{user name}が音声チャットをリクエストしています。"
+    },
+    "productSpecific": {
+      "knoxTeams": {
+        "vi-VN": "{user name} yêu cầu voice chat."
+      }
+    },
+    "status": "approved",
+    "metadata": {
+      "createdAt": "2018-02-20",
+      "updatedAt": "2023-07-03",
+      "author": "박시스템"
+    }
+  },
+  {
+    "id": "4",
+    "key": "screen.share.policy",
+    "products": ["knox"],
+    "category": {
+      "section1": "가이드 공유"
+    },
+    "translations": {
+      "ko-KR": "회사 보안 정책에 따라 화면 공유를 허용하지 않습니다.",
+      "en-US": "You cannot view the screen shared due to the company's security policy.",
+      "zh-CN": "根据公司安全政策无法查看共享屏幕。",
+      "ja-JP": "会社のセキュリティ方針により画面を表示することができません。"
+    },
+    "status": "approved",
+    "metadata": {
+      "createdAt": "2018-06-22",
+      "updatedAt": "2018-02-20",
+      "author": "최보안"
+    }
+  },
+  {
+    "id": "5", 
+    "key": "screen.share.now",
+    "products": ["knox"],
+    "category": {
+      "section1": "화면 공유"
+    },
+    "translations": {
+      "ko-KR": "화면 공유 중입니다.",
+      "en-US": "Now sharing.",
+      "zh-CN": "正在共享。",
+      "ja-JP": "共有されています。"
+    },
+    "productSpecific": {
+      "brityMessenger": {
+        "vi-VN": "Việc chia sẻ màn hình."
+      }
+    },
+    "status": "approved",
+    "metadata": {
+      "createdAt": "2018-02-20",
+      "updatedAt": "2018-02-20", 
+      "author": "신공유"
+    }
+  },
+  {
+    "id": "6",
+    "key": "chat.group.switch", 
+    "products": ["knox"],
+    "category": {
+      "section1": "시스템 메시지"
+    },
+    "translations": {
+      "ko-KR": "그룹 대화로 전환합니다.",
+      "en-US": "Switch to group chat.",
+      "zh-CN": "切换至群聊。",
+      "ja-JP": "グループチャットに切り替えます。"
+    },
+    "productSpecific": {
+      "brityMessenger": {
+        "vi-VN": "Chuyển sang chat nhóm."
+      }
+    },
+    "status": "approved",
+    "metadata": {
+      "createdAt": "2018-02-20",
+      "updatedAt": "2018-02-20",
+      "author": "한그룹"
+    }
+  },
+  {
+    "id": "7",
+    "key": "screen.share.ended",
+    "products": ["knox"],
+    "category": {
+      "section1": "동작"
+    }, 
+    "translations": {
+      "ko-KR": "공유자의 네트워크 상태가 좋지 않아 화면 공유가 종료되었습니다.",
+      "en-US": "Screen sharing has ended because the network of the person sharing the screen is unstable.",
+      "zh-CN": "因共享人网络不稳定导致屏幕共享已结束。",
+      "ja-JP": "画面を共有している人のネットワークが不安定のため画面共有が終了しました。"
+    },
+    "productSpecific": {
+      "brityMessenger": {
+        "vi-VN": "Việc chia sẻ màn hình đã kết thúc do mạng của người chia sẻ bị gián đoạn."
+      }
+    },
+    "status": "approved",
+    "metadata": {
+      "createdAt": "2018-02-20",
+      "updatedAt": "2018-02-20",
+      "author": "유네트워크"
+    }
+  },
+  {
+    "id": "8",
+    "key": "common.enter_code",
+    "products": ["knox", "brity"],
+    "category": {
+      "common": true,
+      "component": "Input"
+    },
+    "translations": {
+      "ko-KR": "인증 코드 입력",
+      "en-US": "Enter the Code",
+      "zh-CN": "输入验证码",
+      "ja-JP": "認証コードを入力"
+    },
+    "status": "approved",
+    "metadata": {
+      "createdAt": "2023-07-03",
+      "updatedAt": "2023-07-03",
+      "author": "최개발"
+    }
+  }
+]

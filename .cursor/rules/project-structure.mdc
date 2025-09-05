@@ -1,0 +1,49 @@
+---
+alwaysApply: true
+---
+
+# Language Resource Project - Figma Plugin Architecture
+
+## Project Overview
+This project builds a **Figma plugin that connects to our API** for language resource management.
+
+### Core Components:
+1. **Figma Plugin** - Frontend interface within Figma
+   - Selection mode → suggest improvements
+   - Full scan mode → audit entire document
+2. **API Server** - Backend service with three main endpoints:
+   - `GET /api/resources/search` - Search language resources
+   - `POST /api/suggest` - Get suggestions for selections
+   - `POST /api/audit` - Audit entire documents
+3. **Resource Data** - Starts with JSON file, evolves to DB schema
+
+## Code Quality Standards
+
+### Readability First
+- Write code that **non-developers can read and extend**
+- Use clear, descriptive naming in English
+- Add short inline comments explaining key business logic
+- Avoid complex abstractions unless absolutely necessary
+
+### Function Design
+- Keep functions **small and focused** (single responsibility)
+- Use meaningful parameter and return types
+- Handle errors gracefully with user-friendly messages
+
+### Naming Conventions
+- **JavaScript/TypeScript**: camelCase for variables, functions, properties
+- **Database**: snake_case for table names, field names
+- **Components**: PascalCase for React components
+- **Files**: kebab-case for file names (e.g., `user-profile.tsx`)
+
+### Development Workflow
+1. **Start with mock data** for rapid prototyping
+2. **Test with simple cases** before adding complexity
+3. **Replace mocks with real integrations** once logic is proven
+4. **Document API contracts** clearly for plugin integration
+
+## Project Structure Reference
+- Frontend components: `apps/web/` and `packages/ui/`
+- API routes: `apps/web/app/api/`
+- Shared utilities: `packages/` for reusable code
+- Plugin code: (to be created in plugin directory)

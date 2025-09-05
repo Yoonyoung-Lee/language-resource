@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Language Resource Manager</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #333;
+      background: #ffffff;
+      padding: 16px;
+    }
+    
+    .header {
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    
+    .header h1 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .header p {
+      font-size: 11px;
+      color: #666;
+    }
+    
+    .mode-toggle {
+      display: flex;
+      background: #f0f0f0;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    
+    .mode-button {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    
+    .mode-button.active {
+      background: #ffffff;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    
+    .content-section {
+      margin-bottom: 20px;
+    }
+    
+    .content-section h2 {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .button {
+      background: #0d99ff;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 500;
+      width: 100%;
+      margin-bottom: 8px;
+      transition: background 0.2s;
+    }
+    
+    .button:hover {
+      background: #0077cc;
+    }
+    
+    .button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+    
+    .button.secondary {
+      background: #ffffff;
+      color: #333;
+      border: 1px solid #e5e5e5;
+    }
+    
+    .button.secondary:hover {
+      background: #f8f8f8;
+    }
+    
+    .status {
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      margin-bottom: 12px;
+    }
+    
+    .status.info {
+      background: #e3f2fd;
+      color: #1565c0;
+      border: 1px solid #bbdefb;
+    }
+    
+    .status.success {
+      background: #e8f5e8;
+      color: #2e7d32;
+      border: 1px solid #c8e6c9;
+    }
+    
+    .status.error {
+      background: #ffebee;
+      color: #d32f2f;
+      border: 1px solid #ffcdd2;
+    }
+    
+    .suggestions {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .suggestion-item {
+      padding: 12px;
+      border: 1px solid #e5e5e5;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      background: #fafafa;
+    }
+    
+    .suggestion-header {
+      display: flex;
+      justify-content: between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .suggestion-title {
+      font-size: 11px;
+      font-weight: 600;
+    }
+    
+    .suggestion-priority {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+    
+    .priority-high {
+      background: #ffebee;
+      color: #d32f2f;
+    }
+    
+    .priority-medium {
+      background: #fff3e0;
+      color: #f57c00;
+    }
+    
+    .priority-low {
+      background: #e8f5e8;
+      color: #388e3c;
+    }
+    
+    .suggestion-description {
+      font-size: 10px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+    
+    .suggestion-actions {
+      display: flex;
+      gap: 6px;
+    }
+    
+    .suggestion-actions .button {
+      flex: 1;
+      margin-bottom: 0;
+      padding: 6px 12px;
+    }
+    
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #666;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 8px;
+      background: #f8f8f8;
+      border-radius: 6px;
+    }
+    
+    .stat-number {
+      font-size: 16px;
+      font-weight: 600;
+      color: #0d99ff;
+    }
+    
+    .stat-label {
+      font-size: 10px;
+      color: #666;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Language Resource Manager</h1>
+    <p>Improve text and accessibility in your designs</p>
+  </div>
+  
+  <div class="mode-toggle">
+    <button class="mode-button active" id="suggest-mode">Selection</button>
+    <button class="mode-button" id="audit-mode">Full Audit</button>
+  </div>
+  
+  <div id="suggest-panel" class="content-section">
+    <h2>Analyze Selection</h2>
+    <button class="button" id="analyze-selection">Analyze Selected Elements</button>
+    <div id="selection-status" class="hidden"></div>
+    <div id="suggestions-container" class="hidden">
+      <div class="suggestions" id="suggestions-list"></div>
+    </div>
+  </div>
+  
+  <div id="audit-panel" class="content-section hidden">
+    <h2>Document Audit</h2>
+    <button class="button" id="audit-document">Audit Entire Document</button>
+    <div id="audit-status" class="hidden"></div>
+    <div id="audit-results" class="hidden">
+      <div class="stats">
+        <div class="stat-item">
+          <div class="stat-number" id="total-issues">0</div>
+          <div class="stat-label">Issues Found</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="audit-score">100</div>
+          <div class="stat-label">Score</div>
+        </div>
+      </div>
+      <div class="suggestions" id="audit-issues"></div>
+    </div>
+  </div>
+
+  <script src="ui.js"></script>
+</body>
+</html>
