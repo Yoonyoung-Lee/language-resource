@@ -1,1 +1,18 @@
-
+{
+  "name": "Language Resource Manager",
+  "id": "language-resource-manager",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "dist/ui.html",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": ["none"],
+    "devAllowedDomains": ["localhost:3000"],
+    "reasoning": "Access local Next.js API during development."
+  },
+  "menu": [
+    { "name": "선택 요소 분석", "command": "suggest" },
+    { "name": "문서 검토 실행", "command": "audit" }
+  ]
+}

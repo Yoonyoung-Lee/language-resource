@@ -98,3 +98,74 @@ export interface AuditResponse {
     missing: number
   }
 }
+
+// Figma plugin specific types
+export interface FigmaNode {
+  id: string
+  name: string
+  type: string
+  text?: string
+  children?: FigmaNode[]
+  visible?: boolean
+  fontSize?: number
+  fontName?: any
+  textAlignHorizontal?: string
+  textAlignVertical?: string
+}
+
+export interface FigmaSelectionSuggestRequest {
+  selection: FigmaNode[]
+  locale?: keyof typeof LANGUAGES
+  product?: keyof typeof PRODUCTS
+}
+
+export interface FigmaSuggestion {
+  id: string
+  nodeId: string
+  title: string
+  description: string
+  priority: 'high' | 'medium' | 'low'
+  before?: string
+  after?: string
+}
+
+export interface FigmaSelectionSuggestResponse {
+  suggestions: FigmaSuggestion[]
+}
+
+export interface FigmaDocument {
+  name: string
+  pages: Array<{
+    id: string
+    name: string
+    children: FigmaNode[]
+  }>
+}
+
+export interface FigmaDocumentAuditRequest {
+  document: FigmaDocument
+  locale?: keyof typeof LANGUAGES
+  product?: keyof typeof PRODUCTS
+}
+
+export interface FigmaAuditIssue {
+  title: string
+  description: string
+  priority: 'high' | 'medium' | 'low'
+  location: string
+  recommendation: string
+  nodeId?: string
+}
+
+export interface FigmaDocumentAuditResponse {
+  issues: FigmaAuditIssue[]
+  stats: {
+    issuesFound: number
+    totalTexts: number
+    coverage: number
+  }
+  summary: {
+    overallScore: number
+    recommendations: string[]
+  }
+}

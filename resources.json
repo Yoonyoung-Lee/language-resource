@@ -2,7 +2,10 @@
   {
     "id": "1",
     "key": "workspace.create",
-    "products": ["knox", "brity"],
+    "products": [
+      "knox",
+      "brity"
+    ],
     "category": {
       "common": true,
       "section1": "Workspace",
@@ -20,9 +23,11 @@
     }
   },
   {
-    "id": "2", 
+    "id": "2",
     "key": "voice.chat.join",
-    "products": ["knox"],
+    "products": [
+      "knox"
+    ],
     "category": {
       "section1": "음성/영상 채팅",
       "component": "Dialog"
@@ -43,14 +48,17 @@
     "status": "approved",
     "metadata": {
       "createdAt": "2018-02-20",
-      "updatedAt": "2023-07-03", 
+      "updatedAt": "2023-07-03",
       "author": "이번역"
     }
   },
   {
     "id": "3",
     "key": "user.name.request",
-    "products": ["knox", "brity"],
+    "products": [
+      "knox",
+      "brity"
+    ],
     "category": {
       "section1": "시스템 메시지"
     },
@@ -75,7 +83,9 @@
   {
     "id": "4",
     "key": "screen.share.policy",
-    "products": ["knox"],
+    "products": [
+      "knox"
+    ],
     "category": {
       "section1": "가이드 공유"
     },
@@ -93,9 +103,11 @@
     }
   },
   {
-    "id": "5", 
+    "id": "5",
     "key": "screen.share.now",
-    "products": ["knox"],
+    "products": [
+      "knox"
+    ],
     "category": {
       "section1": "화면 공유"
     },
@@ -113,14 +125,16 @@
     "status": "approved",
     "metadata": {
       "createdAt": "2018-02-20",
-      "updatedAt": "2018-02-20", 
+      "updatedAt": "2018-02-20",
       "author": "신공유"
     }
   },
   {
     "id": "6",
-    "key": "chat.group.switch", 
-    "products": ["knox"],
+    "key": "chat.group.switch",
+    "products": [
+      "knox"
+    ],
     "category": {
       "section1": "시스템 메시지"
     },
@@ -145,10 +159,12 @@
   {
     "id": "7",
     "key": "screen.share.ended",
-    "products": ["knox"],
+    "products": [
+      "knox"
+    ],
     "category": {
       "section1": "동작"
-    }, 
+    },
     "translations": {
       "ko-KR": "공유자의 네트워크 상태가 좋지 않아 화면 공유가 종료되었습니다.",
       "en-US": "Screen sharing has ended because the network of the person sharing the screen is unstable.",
@@ -170,7 +186,10 @@
   {
     "id": "8",
     "key": "common.enter_code",
-    "products": ["knox", "brity"],
+    "products": [
+      "knox",
+      "brity"
+    ],
     "category": {
       "common": true,
       "component": "Input"
@@ -186,6 +205,27 @@
       "createdAt": "2023-07-03",
       "updatedAt": "2023-07-03",
       "author": "최개발"
+    }
+  },
+  {
+    "id": "9",
+    "key": "resource_1757256337629",
+    "products": [
+      "brity"
+    ],
+    "category": {
+      "common": false,
+      "component": "ㄹㅇㄹ"
+    },
+    "translations": {
+      "ko-KR": "테스트입니다.",
+      "en-US": "IT IS A test"
+    },
+    "status": "draft",
+    "metadata": {
+      "createdAt": "2025-09-07",
+      "updatedAt": "2025-09-07",
+      "author": "호호"
     }
   }
 ]

@@ -1,0 +1,13 @@
+{
+  "tools": {
+    "shadcn-ui": {
+      "name": "shadcn/ui Component Generator",
+      "description": "Generate shadcn/ui components for the project",
+      "command": "npx",
+      "args": ["@shadcn/ui", "add"],
+      "env": {
+        "SHADCN_UI_PROJECT_ROOT": "/Users/yy/workspace/language-resource"
+      }
+    }
+  }
+}

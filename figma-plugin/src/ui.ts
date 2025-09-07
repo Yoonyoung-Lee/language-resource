@@ -2,7 +2,7 @@
 // This file handles UI interactions and API communication
 
 // Configuration
-const API_BASE_URL = 'http://localhost:3000/api' // Change to production URL when deployed
+const API_BASE_URL = 'http://localhost:3001/api' // Change to production URL when deployed
 
 // UI state management
 let currentMode: 'suggest' | 'audit' = 'suggest'
@@ -91,7 +91,7 @@ function setMode(mode: 'suggest' | 'audit') {
 
 // Handle selection analysis
 async function handleAnalyzeSelection() {
-  showStatus(selectionStatus, 'Getting selection...', 'info')
+  showStatus(selectionStatus, '선택 요소 확인 중...', 'info')
   analyzeBtn.disabled = true
   suggestionsContainer.classList.add('hidden')
   
@@ -101,7 +101,7 @@ async function handleAnalyzeSelection() {
 
 // Handle document audit
 async function handleAuditDocument() {
-  showStatus(auditStatus, 'Analyzing document...', 'info')
+  showStatus(auditStatus, '문서 분석 중...', 'info')
   auditBtn.disabled = true
   auditResults.classList.add('hidden')
   
@@ -114,19 +114,19 @@ async function handleSelectionData(data: any[], message?: string) {
   currentSelection = data
   
   if (data.length === 0) {
-    showStatus(selectionStatus, message || 'No elements selected', 'info')
+    showStatus(selectionStatus, message || '선택된 요소가 없습니다', 'info')
     analyzeBtn.disabled = false
     return
   }
   
-  showStatus(selectionStatus, `Analyzing ${data.length} selected element(s)...`, 'info')
+  showStatus(selectionStatus, `${data.length}개의 선택된 요소를 분석 중...`, 'info')
   
   try {
     // Call suggest API
     const response = await fetch(`${API_BASE_URL}/suggest`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ selection: data })
+      body: JSON.stringify({ selection: data, locale: 'ko-KR' })
     })
     
     if (!response.ok) {
@@ -138,13 +138,13 @@ async function handleSelectionData(data: any[], message?: string) {
     if (result.success) {
       currentSuggestions = result.suggestions
       displaySuggestions(result.suggestions)
-      showStatus(selectionStatus, `Found ${result.suggestions.length} suggestion(s)`, 'success')
+      showStatus(selectionStatus, `${result.suggestions.length}개의 제안을 찾았습니다`, 'success')
     } else {
-      throw new Error(result.error || 'Failed to get suggestions')
+      throw new Error(result.error || '제안을 가져오는데 실패했습니다')
     }
   } catch (error) {
     console.error('Failed to get suggestions:', error)
-    showStatus(selectionStatus, 'Failed to analyze selection', 'error')
+    showStatus(selectionStatus, '선택 요소 분석에 실패했습니다', 'error')
   }
   
   analyzeBtn.disabled = false
@@ -152,14 +152,14 @@ async function handleSelectionData(data: any[], message?: string) {
 
 // Handle document data received from plugin
 async function handleDocumentData(data: any) {
-  showStatus(auditStatus, 'Running audit analysis...', 'info')
+  showStatus(auditStatus, '검토 분석 실행 중...', 'info')
   
   try {
     // Call audit API
     const response = await fetch(`${API_BASE_URL}/audit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ document: data })
+      body: JSON.stringify({ document: data, locale: 'ko-KR' })
     })
     
     if (!response.ok) {
@@ -169,14 +169,14 @@ async function handleDocumentData(data: any) {
     const result = await response.json()
     
     if (result.success) {
-      displayAuditResults(result.audit)
-      showStatus(auditStatus, `Audit complete - ${result.audit.stats.issuesFound} issues found`, 'success')
+      displayAuditResults(result)
+      showStatus(auditStatus, `검토 완료 - ${result.stats.issuesFound}개의 이슈를 발견했습니다`, 'success')
     } else {
-      throw new Error(result.error || 'Audit failed')
+      throw new Error(result.error || '검토에 실패했습니다')
     }
   } catch (error) {
     console.error('Failed to audit document:', error)
-    showStatus(auditStatus, 'Failed to audit document', 'error')
+    showStatus(auditStatus, '문서 검토에 실패했습니다', 'error')
   }
   
   auditBtn.disabled = false
@@ -187,7 +187,7 @@ function displaySuggestions(suggestions: any[]) {
   suggestionsList.innerHTML = ''
   
   if (suggestions.length === 0) {
-    suggestionsList.innerHTML = '<div class="status info">No issues found in the selected elements!</div>'
+    suggestionsList.innerHTML = '<div class="status info">선택한 요소에서 이슈를 발견하지 못했습니다!</div>'
   } else {
     suggestions.forEach(suggestion => {
       const suggestionEl = createSuggestionElement(suggestion)
@@ -208,7 +208,7 @@ function displayAuditResults(audit: any) {
   auditIssues.innerHTML = ''
   
   if (audit.issues.length === 0) {
-    auditIssues.innerHTML = '<div class="status success">No issues found in the document!</div>'
+    auditIssues.innerHTML = '<div class="status success">문서에서 이슈를 발견하지 못했습니다!</div>'
   } else {
     audit.issues.forEach((issue: any) => {
       const issueEl = createIssueElement(issue)
@@ -237,14 +237,14 @@ function createSuggestionElement(suggestion: any): HTMLElement {
       </div>
     ` : ''}
     <div class="suggestion-actions">
-      ${suggestion.after ? `
-        <button class="button secondary" onclick="applySuggestion('${suggestion.id}', '${suggestion.after}')">
-          Apply
-        </button>
-      ` : ''}
-      <button class="button secondary" onclick="dismissSuggestion('${suggestion.id}')">
-        Dismiss
+          ${suggestion.after ? `
+      <button class="button secondary" onclick="applySuggestion('${suggestion.id}', '${suggestion.after}')">
+        수정하기
       </button>
+    ` : ''}
+    <button class="button secondary" onclick="dismissSuggestion('${suggestion.id}')">
+      무시
+    </button>
     </div>
   `
   
@@ -299,9 +299,9 @@ function dismissSuggestion(suggestionId: string) {
 // Handle suggestion applied response
 function handleSuggestionApplied(message: any) {
   if (message.success) {
-    showStatus(selectionStatus, 'Suggestion applied successfully!', 'success')
+    showStatus(selectionStatus, '제안이 성공적으로 적용되었습니다!', 'success')
   } else {
-    showStatus(selectionStatus, `Failed to apply suggestion: ${message.error}`, 'error')
+    showStatus(selectionStatus, `제안 적용에 실패했습니다: ${message.error}`, 'error')
   }
 }
 

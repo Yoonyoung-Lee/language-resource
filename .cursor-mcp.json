@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "shadcn-ui": {
+      "command": "npx",
+      "args": ["@shadcn/ui", "mcp"],
+      "env": {
+        "SHADCN_UI_PROJECT_ROOT": "/Users/yy/workspace/language-resource",
+        "SHADCN_UI_COMPONENTS_PATH": "packages/ui/src/components",
+        "SHADCN_UI_UTILS_PATH": "packages/ui/src/lib/utils.ts"
+      }
+    }
+  }
+}
