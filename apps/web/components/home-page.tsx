@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Button } from '@workspace/ui/components/button'
 import { Input } from '@workspace/ui/components/input'
 import { Card, CardContent } from '@workspace/ui/components/card'
+import { Badge } from '@workspace/ui/components/badge'
 
 interface HomePageProps {
   onSearch: (query: string) => void
@@ -25,82 +26,119 @@ export function HomePage({ onSearch }: HomePageProps) {
   }
 
   return (
-    <div className="flex-1 flex items-center justify-center bg-background min-h-screen">
-      <div className="w-full max-w-3xl px-6">
-        {/* Simple Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl mb-6">
-            <svg className="w-8 h-8 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
+    <div className="min-h-screen relative overflow-hidden">
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @keyframes float-1 {
+            0%, 100% { 
+              background-position: 20% 30%;
+              transform: scale(1) rotate(0deg);
+            }
+            50% { 
+              background-position: 80% 60%;
+              transform: scale(1.1) rotate(2deg);
+            }
+          }
           
-          <h1 className="text-4xl font-bold text-foreground mb-3">
-            Language Resource Search
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Knox, Brity 제품의 언어 리소스를 검색하고 관리하세요
-          </p>
+          @keyframes float-2 {
+            0%, 100% { 
+              background-position: 80% 70%;
+              transform: scale(1) rotate(0deg);
+            }
+            50% { 
+              background-position: 30% 40%;
+              transform: scale(1.2) rotate(-3deg);
+            }
+          }
+          
+          @keyframes float-3 {
+            0%, 100% { 
+              background-position: 50% 20%;
+              transform: scale(1) rotate(0deg);
+            }
+            50% { 
+              background-position: 70% 80%;
+              transform: scale(0.9) rotate(1deg);
+            }
+          }
+          
+          .animate-float-1 {
+            animation: float-1 20s ease-in-out infinite alternate;
+          }
+          
+          .animate-float-2 {
+            animation: float-2 25s ease-in-out infinite alternate;
+            animation-delay: 5s;
+          }
+          
+          .animate-float-3 {
+            animation: float-3 30s ease-in-out infinite alternate;
+            animation-delay: 10s;
+          }
+        `
+      }} />
+      
+      {/* Animated Background */}
+      <div className="absolute inset-0" 
+           style={{
+             background: 'linear-gradient(135deg, #dbeafe 0%, #e7f8f9 50%, #bfdbfe 100%)'
+           }}>
+        <div className="absolute inset-0 opacity-60">
+          <div className="absolute inset-0 animate-float-1" 
+               style={{
+                 background: 'radial-gradient(circle, rgba(147, 197, 253, 0.4) 0%, rgba(165, 243, 252, 0.3) 40%, transparent 70%)',
+                 backgroundSize: '800px 600px',
+                 backgroundRepeat: 'no-repeat'
+               }}>
+          </div>
+          <div className="absolute inset-0 animate-float-2"
+               style={{
+                 background: 'radial-gradient(ellipse, rgba(165, 243, 252, 0.5) 0%, rgba(147, 197, 253, 0.4) 40%, transparent 70%)',
+                 backgroundSize: '600px 800px',
+                 backgroundRepeat: 'no-repeat'
+               }}>
+          </div>
+          <div className="absolute inset-0 animate-float-3"
+               style={{
+                 background: 'radial-gradient(ellipse, rgba(147, 197, 253, 0.6) 0%, rgba(165, 243, 252, 0.3) 50%, transparent 80%)',
+                 backgroundSize: '1000px 400px',
+                 backgroundRepeat: 'no-repeat'
+               }}>
+          </div>
         </div>
+      </div>
 
-        {/* Main Search Box - 더 큰 사이즈 */}
-        <div className="mb-8">
-          <Card className="border shadow-lg">
-            <CardContent className="p-0">
-              <div className="flex items-center">
-                <div className="flex-1 p-8">
-                  <Input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="언어 리소스를 검색하세요... 🔍"
-                    className="text-2xl h-14 border-none shadow-none focus-visible:ring-2 focus-visible:ring-primary bg-transparent placeholder:text-muted-foreground text-foreground"
-                    autoFocus
-                  />
-                </div>
-                <div className="px-8">
-                  <Button
-                    onClick={handleSearch}
-                    disabled={!searchQuery.trim()}
-                    size="lg"
-                    className="px-10 py-4 text-base"
-                  >
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    검색
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+      {/* Content */}
+      <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
+        <div className="w-full max-w-4xl">
+          {/* Main Title */}
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold tracking-tight text-black mb-8 sm:text-5xl">
+              찾고 싶은 언어 리소스를 입력하세요
+            </h1>
+          </div>
 
-        {/* Quick Search Suggestions - 단순화 */}
-        <div className="text-center">
-          <p className="text-sm text-muted-foreground mb-4">빠른 검색</p>
-          <div className="flex flex-wrap justify-center gap-2">
-            {[
-              '로그인',
-              'Dialog', 
-              'Button',
-              'Knox',
-              'Brity'
-            ].map((suggestion) => (
+          {/* Main Search */}
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center gap-4 bg-white border border-gray-200 rounded-xl px-6 py-4 shadow-2xl focus-within:border-black focus-within:border-2 transition-all duration-200">
+              <Input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="텍스트 혹은 화면명을 입력하세요"
+                className="h-12 border-0 bg-transparent text-lg focus-visible:ring-0 px-0 text-gray-700 placeholder:text-gray-500 placeholder:text-xl flex-1"
+                autoFocus
+              />
               <Button
-                key={suggestion}
-                variant="outline"
-                size="sm"
-                className="hover:bg-primary hover:text-primary-foreground transition-colors"
-                onClick={() => {
-                  setSearchQuery(suggestion)
-                  onSearch(suggestion)
-                }}
+                onClick={handleSearch}
+                disabled={!searchQuery.trim()}
+                size="lg"
+                className="h-12 px-8 text-base bg-black hover:bg-black text-white border-0 font-semibold"
               >
-                {suggestion}
+                검색
               </Button>
-            ))}
+            </div>
           </div>
         </div>
       </div>

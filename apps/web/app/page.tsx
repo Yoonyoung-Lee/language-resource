@@ -6,7 +6,7 @@
 import { useState } from 'react'
 import { MainLayout } from '@/components/main-layout'
 import { HomePage } from '@/components/home-page'
-import { ResourcesPage } from '@/components/resources-page-v2'
+import ResourcesPage from '@/components/resources-page-v2'
 import { SearchResultsPage } from '@/components/search-results-page'
 
 export default function App() {
