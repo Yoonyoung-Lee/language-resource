@@ -103,7 +103,7 @@ async function createHandler(request: NextRequest) {
     const newId = (maxId + 1).toString()
 
     // Get current date
-    const currentDate = new Date().toISOString().split('T')[0] // YYYY-MM-DD format
+    const currentDate = new Date().toISOString().split('T')[0]! // YYYY-MM-DD format
 
     // Create new resource
     const newResource: Resource = {

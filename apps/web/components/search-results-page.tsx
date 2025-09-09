@@ -84,7 +84,7 @@ export function SearchResultsPage({ searchQuery, onBackToHome }: SearchResultsPa
     if (hasLocalData) {
       setSearchResults(localResults)
       if (localResults.length > 0) {
-        setSelectedResource(localResults[0])
+        setSelectedResource(localResults[0] || null)
       } else {
         setSelectedResource(null)
       }

@@ -212,7 +212,7 @@ export class SupabaseRepo {
   }): Promise<LanguageResource> {
     try {
       // Determine which text field to populate based on locale
-      const insertData: LanguageResourceInsert = {
+      const insertData: any = {
         status: params.status || 'approved',
         author: params.author,
         knox: params.knox || false,

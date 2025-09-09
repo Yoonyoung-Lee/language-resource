@@ -23,7 +23,7 @@ interface UpdateResourceRequest {
 
 export async function PUT(
   request: NextRequest, 
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // Handle OPTIONS preflight request
   if (request.method === 'OPTIONS') {
@@ -51,7 +51,7 @@ export async function PUT(
   }
 
   try {
-    const { id } = params
+    const { id } = await params
     
     // Validate ID parameter
     if (!id || typeof id !== 'string') {
@@ -93,7 +93,7 @@ export async function PUT(
     const updatedResource = { ...resources[resourceIndex] }
     
     // Update category fields
-    if (body.category) {
+    if (body.category && updatedResource.category) {
       if (body.category.section1 !== undefined) {
         updatedResource.category.section1 = body.category.section1
       }
@@ -107,22 +107,22 @@ export async function PUT(
       Object.keys(body.translations).forEach(locale => {
         const localeKey = locale as keyof typeof body.translations
         if (body.translations && body.translations[localeKey] !== undefined) {
-          updatedResource.translations[localeKey] = body.translations[localeKey] as string
+          (updatedResource.translations as any)[localeKey] = body.translations[localeKey] as string
         }
       })
     }
 
     // Update metadata
-    if (body.metadata) {
+    if (body.metadata && updatedResource.metadata) {
       if (body.metadata.author !== undefined) {
         updatedResource.metadata.author = body.metadata.author
       }
       // Update the updatedAt timestamp
-      updatedResource.metadata.updatedAt = new Date().toISOString().split('T')[0] // YYYY-MM-DD format
+      updatedResource.metadata.updatedAt = new Date().toISOString().split('T')[0]! // YYYY-MM-DD format
     }
 
     // Update the resource in the array
-    resources[resourceIndex] = updatedResource
+    resources[resourceIndex] = updatedResource as any
 
     // Write back to file
     try {

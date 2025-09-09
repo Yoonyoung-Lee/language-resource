@@ -96,13 +96,10 @@ async function suggestHandler(request: NextRequest) {
     
     // Fallback to basic suggestion without AI
     return NextResponse.json({
-      success: true,
-      suggestion: body.text || '',
-      rationale: 'Unable to generate AI suggestion, returning original text. Please check Ollama service.',
-      confidence: 0.3,
-      alternatives: [],
+      success: false,
+      error: 'Unable to generate AI suggestion. Please check Ollama service.',
       error_details: error instanceof Error ? error.message : 'Unknown error'
-    })
+    }, { status: 500 })
   }
 }
 
