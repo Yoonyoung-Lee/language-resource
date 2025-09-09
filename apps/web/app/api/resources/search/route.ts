@@ -1,9 +1,9 @@
-// GET /api/resources/search - Search language resources using Supabase
+// GET /api/resources/search - Search language resources using local JSON data
 // This endpoint allows searching through language resources with various filters
 
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase'
-import { LanguageResource } from '@/lib/supabase'
+import { loadResources } from '@/lib/loadResources'
+import { Resource } from '@/lib/types'
 
 async function searchHandler(request: NextRequest) {
   try {
@@ -16,89 +16,57 @@ async function searchHandler(request: NextRequest) {
 
     console.log('Search request:', { query, locale, product, category, limit })
 
-    // Build Supabase query
-    let supabaseQuery = supabaseAdmin
-      .from('language_resources')
-      .select('*')
+    // Load resources from local JSON file
+    const allResources = loadResources()
+    
+    // Filter resources based on search criteria
+    let filteredResources = allResources
 
     // Filter by product
-    if (product === 'knox') {
-      supabaseQuery = supabaseQuery.eq('knox', true)
-    } else if (product === 'brity') {
-      supabaseQuery = supabaseQuery.eq('brity', true)
+    if (product) {
+      filteredResources = filteredResources.filter(resource => 
+        resource.products.includes(product)
+      )
     }
 
     // Filter by category
     if (category) {
-      supabaseQuery = supabaseQuery.or(`feature_category.ilike.%${category}%,component.ilike.%${category}%`)
+      filteredResources = filteredResources.filter(resource => 
+        resource.category.section1?.includes(category) ||
+        resource.category.component?.includes(category)
+      )
     }
 
-    // Search by query text using trigram similarity
+    // Search by query text
     if (query) {
-      if (locale === 'ko-KR') {
-        // Search in Korean text
-        supabaseQuery = supabaseQuery.or(
-          `korean_text.ilike.%${query}%,korean_text_norm.ilike.%${query}%,feature_category.ilike.%${query}%,component.ilike.%${query}%`
-        )
-      } else if (locale === 'en-US') {
-        // Search in English text
-        supabaseQuery = supabaseQuery.or(
-          `english_text.ilike.%${query}%,english_text_norm.ilike.%${query}%,feature_category.ilike.%${query}%,component.ilike.%${query}%`
-        )
-      } else {
-        // Search in both languages
-        supabaseQuery = supabaseQuery.or(
-          `korean_text.ilike.%${query}%,english_text.ilike.%${query}%,feature_category.ilike.%${query}%,component.ilike.%${query}%`
-        )
-      }
+      const searchQuery = query.toLowerCase()
+      filteredResources = filteredResources.filter(resource => {
+        // Search in key
+        if (resource.key.toLowerCase().includes(searchQuery)) return true
+        
+        // Search in translations
+        const translations = resource.translations
+        if (translations['ko-KR']?.toLowerCase().includes(searchQuery)) return true
+        if (translations['en-US']?.toLowerCase().includes(searchQuery)) return true
+        if (translations['zh-CN']?.toLowerCase().includes(searchQuery)) return true
+        if (translations['ja-JP']?.toLowerCase().includes(searchQuery)) return true
+        if (translations['vi-VN']?.toLowerCase().includes(searchQuery)) return true
+        
+        // Search in category
+        if (resource.category.section1?.toLowerCase().includes(searchQuery)) return true
+        if (resource.category.component?.toLowerCase().includes(searchQuery)) return true
+        
+        return false
+      })
     }
 
-    // Apply limit and order
-    supabaseQuery = supabaseQuery
-      .order('updated_at', { ascending: false })
-      .limit(limit)
-
-    // Execute query
-    const { data, error, count } = await supabaseQuery
-
-    if (error) {
-      console.error('Supabase query error:', error)
-      throw new Error(`Database query failed: ${error.message}`)
-    }
-
-    // Convert to Resource format for compatibility
-    const resources = (data || []).map((item: LanguageResource) => ({
-      id: item.id.toString(),
-      key: `${item.feature_category || 'general'}.${item.component || 'default'}`,
-      products: [
-        ...(item.knox ? ['knox'] : []),
-        ...(item.brity ? ['brity'] : [])
-      ],
-      category: {
-        common: item.is_common,
-        section1: item.feature_category,
-        component: item.component,
-        artboard: item.artboard
-      },
-      translations: {
-        'ko-KR': item.korean_text,
-        'en-US': item.english_text || '',
-        'zh-CN': undefined,
-        'ja-JP': undefined,
-        'vi-VN': undefined
-      },
-      status: item.status,
-      metadata: {
-        createdAt: item.created_at.split('T')[0],
-        updatedAt: item.updated_at.split('T')[0],
-        author: item.author
-      }
-    }))
+    // Apply limit
+    const resources = filteredResources.slice(0, limit)
 
     return NextResponse.json({
       success: true,
       data: resources,
-      total: count || resources.length,
+      total: filteredResources.length,
       query: { query: query || '', locale, product, category, limit }
     })
 
