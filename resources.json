@@ -227,5 +227,67 @@
       "updatedAt": "2025-09-07",
       "author": "호호"
     }
+  },
+  {
+    "id": "10",
+    "key": "resource_1757340562411",
+    "products": [
+      "brity"
+    ],
+    "category": {
+      "common": false
+    },
+    "translations": {
+      "ko-KR": "ㅇㄹㄴ",
+      "en-US": "and"
+    },
+    "status": "draft",
+    "metadata": {
+      "createdAt": "2025-09-08",
+      "updatedAt": "2025-09-08",
+      "author": "사용자"
+    }
+  },
+  {
+    "id": "11",
+    "key": "resource_1757340794338",
+    "products": [
+      "knox"
+    ],
+    "category": {
+      "common": false,
+      "component": "ㄴㄹㄴ"
+    },
+    "translations": {
+      "ko-KR": "안",
+      "en-US": "ddf"
+    },
+    "status": "draft",
+    "metadata": {
+      "createdAt": "2025-09-08",
+      "updatedAt": "2025-09-08",
+      "author": "사용자"
+    }
+  },
+  {
+    "id": "12",
+    "key": "resource_1757340816218",
+    "products": [
+      "knox"
+    ],
+    "category": {
+      "common": false,
+      "component": "ㅇㄹㄴㄹ"
+    },
+    "translations": {
+      "ko-KR": "ㅇㄹㄴㅇㄹ",
+      "en-US": "ㅈㄷㅈ"
+    },
+    "status": "draft",
+    "metadata": {
+      "createdAt": "2025-09-08",
+      "updatedAt": "2025-09-08",
+      "author": "사용자"
+    }
   }
 ]
