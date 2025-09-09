@@ -24,10 +24,32 @@ interface UpdateResourceRequest {
   }
 }
 
-async function updateHandler(request: NextRequest, { params }: { params: { id: string } }) {
+interface RouteParams {
+  params: { id: string }
+}
+
+async function updateHandler(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = params
-    const body = await request.json() as UpdateResourceRequest
+    
+    // Validate ID parameter
+    if (!id || typeof id !== 'string') {
+      return NextResponse.json(
+        { error: 'Invalid resource ID' },
+        { status: 400 }
+      )
+    }
+
+    // Parse and validate request body
+    let body: UpdateResourceRequest
+    try {
+      body = await request.json() as UpdateResourceRequest
+    } catch (parseError) {
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      )
+    }
 
     // Load current resources
     const resources = loadResources()
@@ -76,12 +98,25 @@ async function updateHandler(request: NextRequest, { params }: { params: { id: s
     resources[resourceIndex] = updatedResource
 
     // Write back to file
-    const resourcesPath = path.join(process.cwd(), '../../resources.json')
-    fs.writeFileSync(resourcesPath, JSON.stringify(resources, null, 2), 'utf-8')
+    try {
+      const resourcesPath = path.join(process.cwd(), '../../resources.json')
+      fs.writeFileSync(resourcesPath, JSON.stringify(resources, null, 2), 'utf-8')
+    } catch (writeError) {
+      console.error('Failed to write resources file:', writeError)
+      return NextResponse.json(
+        { error: 'Failed to save changes' },
+        { status: 500 }
+      )
+    }
 
     // Clear cache so next load gets the updated data
-    const { clearResourcesCache } = require('@/lib/loadResources')
-    clearResourcesCache()
+    try {
+      const { clearResourcesCache } = require('@/lib/loadResources')
+      clearResourcesCache()
+    } catch (cacheError) {
+      console.warn('Failed to clear cache:', cacheError)
+      // Don't fail the request for cache clearing errors
+    }
 
     return NextResponse.json({
       success: true,
