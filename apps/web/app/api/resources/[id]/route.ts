@@ -1,9 +1,6 @@
 // PUT /api/resources/[id] - Update a specific resource
 import { NextRequest, NextResponse } from 'next/server'
 import { loadResources } from '@/lib/loadResources'
-import { Resource } from '@/lib/types'
-import { withCors } from '@/lib/withCors'
-import { withSecret } from '@/lib/withSecret'
 import fs from 'fs'
 import path from 'path'
 
@@ -24,19 +21,46 @@ interface UpdateResourceRequest {
   }
 }
 
-async function updateHandler(
+export async function PUT(
   request: NextRequest, 
   { params }: { params: { id: string } }
 ) {
+  // Handle OPTIONS preflight request
+  if (request.method === 'OPTIONS') {
+    return new NextResponse(null, { 
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-secret',
+        'Access-Control-Max-Age': '86400',
+      }
+    })
+  }
+
+  // Check secret authentication
+  const secretPassword = process.env.SECRET_PASSWORD
+  if (secretPassword) {
+    const requestSecret = request.headers.get('x-secret')
+    if (!requestSecret || requestSecret !== secretPassword) {
+      return NextResponse.json(
+        { error: 'Unauthorized: Missing or invalid x-secret header' },
+        { status: 401 }
+      )
+    }
+  }
+
   try {
     const { id } = params
     
     // Validate ID parameter
     if (!id || typeof id !== 'string') {
-      return NextResponse.json(
+      const errorResponse = NextResponse.json(
         { error: 'Invalid resource ID' },
         { status: 400 }
       )
+      errorResponse.headers.set('Access-Control-Allow-Origin', '*')
+      return errorResponse
     }
 
     // Parse and validate request body
@@ -44,10 +68,12 @@ async function updateHandler(
     try {
       body = await request.json() as UpdateResourceRequest
     } catch (parseError) {
-      return NextResponse.json(
+      const errorResponse = NextResponse.json(
         { error: 'Invalid JSON in request body' },
         { status: 400 }
       )
+      errorResponse.headers.set('Access-Control-Allow-Origin', '*')
+      return errorResponse
     }
 
     // Load current resources
@@ -55,10 +81,12 @@ async function updateHandler(
     const resourceIndex = resources.findIndex(r => r.id === id)
 
     if (resourceIndex === -1) {
-      return NextResponse.json(
+      const errorResponse = NextResponse.json(
         { error: 'Resource not found' },
         { status: 404 }
       )
+      errorResponse.headers.set('Access-Control-Allow-Origin', '*')
+      return errorResponse
     }
 
     // Update the resource
@@ -102,10 +130,12 @@ async function updateHandler(
       fs.writeFileSync(resourcesPath, JSON.stringify(resources, null, 2), 'utf-8')
     } catch (writeError) {
       console.error('Failed to write resources file:', writeError)
-      return NextResponse.json(
+      const errorResponse = NextResponse.json(
         { error: 'Failed to save changes' },
         { status: 500 }
       )
+      errorResponse.headers.set('Access-Control-Allow-Origin', '*')
+      return errorResponse
     }
 
     // Clear cache so next load gets the updated data
@@ -117,19 +147,31 @@ async function updateHandler(
       // Don't fail the request for cache clearing errors
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       data: updatedResource,
       message: 'Resource updated successfully'
     })
 
+    // Add CORS headers
+    response.headers.set('Access-Control-Allow-Origin', '*')
+    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-secret')
+    
+    return response
+
   } catch (error) {
     console.error('Update API error:', error)
-    return NextResponse.json(
+    const errorResponse = NextResponse.json(
       { error: 'Failed to update resource' },
       { status: 500 }
     )
+    
+    // Add CORS headers to error response
+    errorResponse.headers.set('Access-Control-Allow-Origin', '*')
+    errorResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+    errorResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-secret')
+    
+    return errorResponse
   }
 }
-
-export const PUT = withCors(withSecret(updateHandler))
