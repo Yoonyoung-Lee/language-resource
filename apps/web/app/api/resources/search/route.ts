@@ -1,10 +1,9 @@
-// GET /api/resources/search - Search language resources using Supabase
+// GET /api/resources/search - Search language resources using local JSON data
 // This endpoint allows searching through language resources with various filters
 
 import { NextRequest, NextResponse } from 'next/server'
-import { withCors } from '@/lib/withCors'
-import { withSecret } from '@/lib/withSecret'
-import { repo } from '@/lib/repository'
+import { loadResources } from '@/lib/loadResources'
+import { Resource } from '@/lib/types'
 
 async function searchHandler(request: NextRequest) {
   try {
@@ -17,19 +16,57 @@ async function searchHandler(request: NextRequest) {
 
     console.log('Search request:', { query, locale, product, category, limit })
 
-    // Use repository to search resources in Supabase
-    const result = await repo.search({
-      query,
-      locale,
-      product,
-      category,
-      limit
-    })
+    // Load resources from local JSON file
+    const allResources = loadResources()
+    
+    // Filter resources based on search criteria
+    let filteredResources = allResources
+
+    // Filter by product
+    if (product) {
+      filteredResources = filteredResources.filter(resource => 
+        resource.products.includes(product)
+      )
+    }
+
+    // Filter by category
+    if (category) {
+      filteredResources = filteredResources.filter(resource => 
+        resource.category.section1?.includes(category) ||
+        resource.category.component?.includes(category)
+      )
+    }
+
+    // Search by query text
+    if (query) {
+      const searchQuery = query.toLowerCase()
+      filteredResources = filteredResources.filter(resource => {
+        // Search in key
+        if (resource.key.toLowerCase().includes(searchQuery)) return true
+        
+        // Search in translations
+        const translations = resource.translations
+        if (translations['ko-KR']?.toLowerCase().includes(searchQuery)) return true
+        if (translations['en-US']?.toLowerCase().includes(searchQuery)) return true
+        if (translations['zh-CN']?.toLowerCase().includes(searchQuery)) return true
+        if (translations['ja-JP']?.toLowerCase().includes(searchQuery)) return true
+        if (translations['vi-VN']?.toLowerCase().includes(searchQuery)) return true
+        
+        // Search in category
+        if (resource.category.section1?.toLowerCase().includes(searchQuery)) return true
+        if (resource.category.component?.toLowerCase().includes(searchQuery)) return true
+        
+        return false
+      })
+    }
+
+    // Apply limit
+    const limitedResources = filteredResources.slice(0, limit)
 
     return NextResponse.json({
       success: true,
-      data: result.data,
-      total: result.total,
+      data: limitedResources,
+      total: filteredResources.length,
       query: { query: query || '', locale, product, category, limit }
     })
 
@@ -46,5 +83,40 @@ async function searchHandler(request: NextRequest) {
   }
 }
 
-// Apply CORS and secret authentication middleware
-export const GET = withCors(withSecret(searchHandler))
+export async function GET(request: NextRequest) {
+  // Handle OPTIONS preflight request
+  if (request.method === 'OPTIONS') {
+    return new NextResponse(null, { 
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-secret',
+        'Access-Control-Max-Age': '86400',
+      }
+    })
+  }
+
+  // Check secret authentication
+  const secretPassword = process.env.SECRET_PASSWORD
+  if (secretPassword) {
+    const requestSecret = request.headers.get('x-secret')
+    if (!requestSecret || requestSecret !== secretPassword) {
+      const errorResponse = NextResponse.json(
+        { error: 'Unauthorized: Missing or invalid x-secret header' },
+        { status: 401 }
+      )
+      errorResponse.headers.set('Access-Control-Allow-Origin', '*')
+      return errorResponse
+    }
+  }
+
+  const response = await searchHandler(request)
+  
+  // Add CORS headers
+  response.headers.set('Access-Control-Allow-Origin', '*')
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-secret')
+  
+  return response
+}
