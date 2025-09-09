@@ -24,11 +24,10 @@ interface UpdateResourceRequest {
   }
 }
 
-interface RouteParams {
-  params: { id: string }
-}
-
-async function updateHandler(request: NextRequest, { params }: RouteParams) {
+async function updateHandler(
+  request: NextRequest, 
+  { params }: { params: { id: string } }
+) {
   try {
     const { id } = params
     
