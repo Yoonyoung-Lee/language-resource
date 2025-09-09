@@ -4,9 +4,9 @@
 export const env = {
   // Supabase configuration - get these from your Supabase project dashboard
   supabase: {
-    url: process.env.NEXT_PUBLIC_SUPABASE_URL || 'your-supabase-project-url',
-    anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'your-supabase-anon-key',
-    serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || 'your-supabase-service-role-key',
+    url: process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+    anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key',
+    serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-role-key',
   },
   
   // API security - used to protect development endpoints
